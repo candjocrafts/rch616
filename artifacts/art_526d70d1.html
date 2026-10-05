@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Separate governance and data contracts from delivery technology</title>
+<style>
+  *{box-sizing:border-box} body{margin:0;background:#f4f4f4;color:#161616;font-family:Arial,"IBM Plex Sans",sans-serif}
+  .page{width:1600px;min-height:900px;margin:0 auto;background:#fff;padding:48px 56px 40px}
+  h1{font-size:34px;line-height:1.15;margin:0 0 8px;font-weight:600;letter-spacing:-.4px}
+  .sub{font-size:18px;color:#525252;margin-bottom:30px}
+  .flow{display:grid;grid-template-columns:250px 42px 430px 42px 410px 42px 250px;align-items:stretch;gap:0}
+  .zone{border:1px solid #c6c6c6;background:#f4f4f4;min-height:510px;padding:18px}
+  .zone h2{font-size:20px;margin:0 0 6px}.zone .desc{font-size:14px;color:#525252;line-height:1.35;margin-bottom:16px}
+  .producer{border-top:6px solid #0f62fe}.control{border-top:6px solid #8a3ffc;background:#f7f2ff}.delivery{border-top:6px solid #009d9a;background:#effbfa}.consumer{border-top:6px solid #fa4d56}
+  .card{background:#fff;border:1px solid #c6c6c6;margin:10px 0;padding:11px 12px;font-size:15px;line-height:1.25}
+  .card strong{display:block;margin-bottom:4px}.tag{display:inline-block;background:#e0e0e0;padding:3px 7px;margin:3px 3px 0 0;font-size:12px}
+  .control .card{border-left:4px solid #8a3ffc}.delivery .card{border-left:4px solid #009d9a}
+  .arrow{display:flex;align-items:center;justify-content:center;font-size:35px;color:#525252}
+  .principle{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .box{padding:18px 20px;border-left:6px solid}.good{background:#defbe6;border-color:#24a148}.bad{background:#fff1f1;border-color:#da1e28}
+  .box h3{margin:0 0 8px;font-size:18px}.box p{margin:0;font-size:15px;line-height:1.42}
+  .footer{margin-top:20px;padding-top:14px;border-top:1px solid #e0e0e0;display:flex;justify-content:space-between;color:#525252;font-size:14px}
+  .rule{font-weight:700;color:#161616}.tiny{font-size:12px;color:#6f6f6f}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Separate the governed data product from how it is delivered</h1>
+  <div class="sub">Define policy, meaning and quality once. Then use the delivery method that fits each client platform.</div>
+
+  <div class="flow">
+    <section class="zone producer">
+      <h2>1. Treasury producers</h2>
+      <div class="desc">Internal systems create data, forecasts and analytics.</div>
+      <div class="card"><strong>Treasury data</strong>Balances · positions · payments · cash flows</div>
+      <div class="card"><strong>Models</strong>Liquidity forecasts · scenarios · anomaly models</div>
+      <div class="card"><strong>Analytics</strong>Benchmarks · KPIs · recommendations</div>
+      <div class="card"><strong>Reference data</strong>Entities · accounts · currencies · calendars</div>
+    </section>
+
+    <div class="arrow">→</div>
+
+    <section class="zone control">
+      <h2>2. Common governance + data contract layer</h2>
+      <div class="desc"><strong>Platform-neutral control plane.</strong> It defines what the product means, who may use it and the service promise.</div>
+      <div class="card"><strong>Data product contract</strong>Schema · business definitions · identifiers · versioning · compatibility</div>
+      <div class="card"><strong>Quality + service levels</strong>Freshness · completeness · accuracy · availability · issue handling</div>
+      <div class="card"><strong>Policy + entitlement</strong>Client identity · permitted use · row/column access · geography · consent</div>
+      <div class="card"><strong>Protection + evidence</strong>Classification · masking · lineage · audit · retention · revocation</div>
+      <div class="card"><strong>Commercial terms</strong>Product tier · usage meter · subscription · support level</div>
+      <span class="tag">Defined once</span><span class="tag">Versioned</span><span class="tag">Auditable</span>
+    </section>
+
+    <div class="arrow">→</div>
+
+    <section class="zone delivery">
+      <h2>3. Delivery adapters</h2>
+      <div class="desc"><strong>Replaceable transport layer.</strong> Each adapter enforces the same contract and policies.</div>
+      <div class="card"><strong>Live analytical sharing</strong>Delta Sharing · platform-native secure shares · open table access</div>
+      <div class="card"><strong>Object/file delivery</strong>Parquet · Iceberg/Delta tables · encrypted object storage · SFTP</div>
+      <div class="card"><strong>APIs + model serving</strong>REST/GraphQL · forecast API · scoring endpoint · packaged model</div>
+      <div class="card"><strong>Streaming</strong>Kafka-compatible events · cloud messaging · CDC</div>
+      <div class="card"><strong>Controlled collaboration</strong>Clean room · confidential query · approved aggregate outputs</div>
+      <span class="tag">Client-specific</span><span class="tag">Swappable</span><span class="tag">Observable</span>
+    </section>
+
+    <div class="arrow">→</div>
+
+    <section class="zone consumer">
+      <h2>4. Client platforms</h2>
+      <div class="desc">Clients consume the same governed product through different technologies.</div>
+      <div class="card"><strong>Snowflake</strong>Share, open table, API or file ingestion</div>
+      <div class="card"><strong>Databricks</strong>Delta Sharing, open table, API or stream</div>
+      <div class="card"><strong>Synapse / Fabric</strong>ADLS file/table, API or stream</div>
+      <div class="card"><strong>Oracle</strong>API, JDBC/ODBC, file or stream</div>
+      <div class="card"><strong>On-premises</strong>Private API, managed file transfer or gateway</div>
+    </section>
+  </div>
+
+  <div class="principle">
+    <div class="box good"><h3>What separation enables</h3><p>Adding a new client platform only requires a new adapter. The product definition, entitlements, quality rules, lineage and audit model stay consistent.</p></div>
+    <div class="box bad"><h3>What to avoid</h3><p>Embedding schemas, access rules and commercial terms inside each delivery technology. That creates duplicate controls, inconsistent client experiences and platform lock-in.</p></div>
+  </div>
+
+  <div class="footer"><span class="rule">Design rule: govern the product centrally; deliver it through multiple channels.</span><span class="tiny">Illustrative treasury data-sharing architecture</span></div>
+</div>
+</body>
+</html>
