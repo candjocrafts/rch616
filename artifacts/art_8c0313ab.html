@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A concise, source-cited Apache Kafka explainer for financial services leaders and practitioners.">
+  <title>Apache Kafka | Bank-Relevant Explainer</title>
+  <style>
+    :root { color-scheme: light; --ink:#172b4d; --muted:#526477; --blue:#0f62fe; --line:#d9e2ec; --wash:#f4f7fb; --teal:#0e7490; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin:0; background:#eef2f6; color:#263746; font:16px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
+    .page { width:min(100% - 32px, 1040px); margin:40px auto; background:white; box-shadow:0 12px 38px #172b4d16; border-radius:16px; overflow:hidden; }
+    header { padding:52px clamp(24px,7vw,76px) 40px; background:linear-gradient(125deg,#102a43,#174c70 68%,#087e8b); color:white; }
+    .eyebrow { margin:0 0 12px; text-transform:uppercase; letter-spacing:.13em; font-size:.75rem; font-weight:750; color:#b7e4f2; }
+    h1 { margin:0; font-size:clamp(2rem,5vw,3.5rem); line-height:1.08; letter-spacing:-.035em; }
+    .subtitle { margin:14px 0 0; max-width:680px; font-size:1.1rem; color:#e0f2f7; }
+    .meta { display:flex; gap:10px; flex-wrap:wrap; margin-top:26px; }
+    .pill { padding:5px 11px; border:1px solid #ffffff55; border-radius:999px; color:#eefaff; font-size:.83rem; }
+    main { padding:32px clamp(24px,7vw,76px) 56px; }
+    .assumption { padding:16px 18px; background:#f0f7ff; border-left:4px solid var(--blue); border-radius:4px 10px 10px 4px; margin:0 0 30px; }
+    h2 { color:var(--ink); margin:36px 0 12px; font-size:1.42rem; line-height:1.3; letter-spacing:-.015em; }
+    h2 .num { color:var(--blue); margin-right:.45em; }
+    h3 { color:var(--ink); font-size:1rem; margin:22px 0 6px; }
+    p { margin:8px 0 14px; }
+    a { color:#0759c7; text-decoration-thickness:1px; text-underline-offset:3px; }
+    a:hover { color:#003a8c; }
+    .issue-list { padding-left:1.25rem; }
+    .issue-list li { margin:0 0 11px; }
+    .table-wrap { overflow-x:auto; margin:14px 0 18px; border:1px solid var(--line); border-radius:10px; }
+    table { width:100%; border-collapse:collapse; min-width:620px; }
+    th,td { padding:12px 14px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { background:#edf4fa; color:#183b56; font-size:.9rem; }
+    tr:last-child td { border-bottom:0; }
+    .glossary { display:grid; grid-template-columns:minmax(130px, 190px) 1fr; border-top:1px solid var(--line); }
+    .glossary dt,.glossary dd { margin:0; padding:10px 12px; border-bottom:1px solid var(--line); }
+    .glossary dt { font-weight:700; color:var(--ink); }
+    .bank-case { padding:20px 22px; background:var(--wash); border:1px solid var(--line); border-radius:12px; }
+    .callout { padding:15px 18px; margin-top:16px; background:#fff8e6; border-left:4px solid #d99a00; border-radius:4px 9px 9px 4px; }
+    .questions li { margin:0 0 10px; }
+    .services { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .service-card { padding:16px 18px; border:1px solid var(--line); border-radius:10px; background:#fff; }
+    .service-card h3 { margin:0 0 6px; }
+    .sources { padding-left:1.4rem; }
+    .sources li { margin-bottom:9px; overflow-wrap:anywhere; }
+    footer { border-top:1px solid var(--line); margin-top:38px; padding-top:18px; color:var(--muted); font-size:.88rem; }
+    @media (max-width:640px) { .page { width:100%; margin:0; border-radius:0; } header { padding-top:38px; } .services { grid-template-columns:1fr; } .glossary { grid-template-columns:1fr; } .glossary dt { padding-bottom:0; border-bottom:0; } .glossary dd { padding-top:2px; } }
+    @media print { body { background:white; font-size:11pt; } .page { width:100%; margin:0; box-shadow:none; border-radius:0; } header { padding:28px 32px; print-color-adjust:exact; -webkit-print-color-adjust:exact; } main { padding:20px 32px; } a { color:inherit; } a[href]::after { content:" (" attr(href) ")"; font-size:.8em; overflow-wrap:anywhere; } h2,h3 { break-after:avoid; } .bank-case,.service-card,.callout { break-inside:avoid; } }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header>
+      <p class="eyebrow">Financial services · Technology primer</p>
+      <h1>Apache Kafka</h1>
+      <p class="subtitle">A concise, bank-relevant explainer for understanding event streaming, practical applications, and the questions worth asking.</p>
+      <div class="meta"><span class="pill">Apache Kafka 4.1 documentation</span><span class="pill">Global-bank perspective</span><span class="pill">Source-cited</span></div>
+    </header>
+    <main>
+      <aside class="assumption"><strong>Scope:</strong> Apache Kafka 4.1 documentation; open-source, distributed event-streaming platform. Deployment model is not specified.<br><strong>Assumptions:</strong> This is an initial education brief for a diversified, multi-jurisdiction global bank. Business line, hosting/data-residency requirements, existing estate, and applicable legal-entity requirements must be validated.</aside>
+
+      <section>
+        <h2><span class="num">1.</span>In plain English</h2>
+        <p>Apache Kafka is software for publishing, storing, and reading streams of records (“events”) across distributed systems. Producers write events to named topics; consumers read them independently, and Kafka retains records according to configured policies, enabling later replay. It is not a system of record, an enterprise data warehouse, or by itself a business workflow/control solution. Ordering is guaranteed only within a partition, not across an entire topic. <a href="https://kafka.apache.org/41/getting-started/introduction/">Apache Kafka Introduction</a> · <a href="https://kafka.apache.org/documentation/#design">Apache Kafka Design</a></p>
+      </section>
+
+      <section>
+        <h2><span class="num">2.</span>Problems it can help solve</h2>
+        <ul class="issue-list">
+          <li><strong>Slow, point-to-point integration:</strong> Kafka can distribute the same event stream to multiple independent consumers rather than requiring every producer to build a direct interface to every downstream system. <strong>Dependency/limitation:</strong> topic design, schemas, ownership, and consumer error handling must be governed. <a href="https://kafka.apache.org/41/getting-started/introduction/">Source</a></li>
+          <li><strong>Need to react to events quickly:</strong> Consumers can process events as they are produced; Kafka Streams supports applications that transform, aggregate, and join streams. <strong>Dependency/limitation:</strong> end-to-end latency also depends on source systems, network, consumer capacity, and failure handling. <a href="https://kafka.apache.org/documentation/streams/">Kafka Streams</a></li>
+          <li><strong>Reconstructing downstream state:</strong> Configured retention and consumer offsets allow consumers to reread data from a chosen point. <strong>Dependency/limitation:</strong> retention, access, sensitive-data handling, and replay procedures require explicit control design. <a href="https://kafka.apache.org/41/getting-started/introduction/">Source</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2><span class="num">3.</span>Competitors and adjacent concepts</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Option/category</th><th>Relationship</th><th>When it may be a better fit / key distinction</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Traditional message queues</strong></td><td>Adjacent substitute for command/task messaging</td><td>May fit discrete work dispatch where long-term event retention and multi-consumer replay are not required; compare delivery, ordering, and operational requirements.</td></tr>
+            <tr><td><strong>Change data capture (CDC)</strong></td><td>Complement</td><td>Captures database changes and can publish them into Kafka; it does not replace the event platform or resolve data-contract governance. <a href="https://kafka.apache.org/documentation/#connect">Apache Kafka Connect</a></td></tr>
+            <tr><td><strong>API integration</strong></td><td>Complement / alternative</td><td>Better for synchronous request-response interactions; event streaming is typically asynchronous and decoupled.</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section>
+        <h2><span class="num">4.</span>Glossary</h2>
+        <dl class="glossary">
+          <dt>Event</dt><dd>A record that something happened, such as a payment status changing.</dd>
+          <dt>Topic</dt><dd>A named stream to which events are written and from which they are read.</dd>
+          <dt>Partition</dt><dd>A topic subdivision that enables distribution and defines the scope of record ordering.</dd>
+          <dt>Consumer group</dt><dd>Consumers cooperating so each partition is assigned to one group member at a time.</dd>
+          <dt>Offset</dt><dd>A consumer’s position in a partition, used to resume or replay processing.</dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2><span class="num">5.</span>In a large global bank</h2>
+        <div class="bank-case">
+          <p><strong>Illustrative application—not a client-specific design:</strong> A payments operations owner could use Kafka to distribute payment-status events from a payment-processing domain to fraud operations, customer-notification, liquidity-monitoring, and analytics services. Each consuming team would have a separate consumer group and could operate at its own pace; source-system identifiers, timestamps, status codes, and carefully classified customer/account references might be included.</p>
+          <p>An integration team would define event contracts and schemas; domain owners would own event quality; platform operations would monitor capacity, replication, access, and recovery; and control owners would approve data classification and retention. Potential success indicators include time from status change to downstream availability, consumer lag, failed-processing rate, and completeness/reconciliation exceptions. This is an inference, not a proven bank outcome; validate architecture, data, process, and control requirements with the bank.</p>
+        </div>
+        <div class="callout"><strong>Bank control considerations:</strong> Establish least-privilege authentication/authorization, encrypted transport where required, auditability, data classification and retention rules, resilience/failover testing, and third-party/dependency responsibilities. Kafka documentation describes SSL/TLS, SASL authentication, authorization, quotas, and audit-log capabilities, but these are platform features—not proof that a given deployment meets bank requirements. <a href="https://kafka.apache.org/41/security/security-overview/">Apache Kafka Security</a> Basel’s operational-resilience principles provide a useful cross-border reference point for identifying and managing operational-resilience risk; this is not legal or compliance advice. <a href="https://www.bis.org/bcbs/publ/d516.htm">Basel Committee, Principles for operational resilience</a></div>
+      </section>
+
+      <section>
+        <h2><span class="num">6.</span>Discovery questions / watch-outs</h2>
+        <ul class="questions">
+          <li>Which business events need distribution, who owns each event contract, and which consumers are critical? Unclear ownership can create unreliable downstream use.</li>
+          <li>What recovery point, recovery time, replay, and reconciliation requirements apply? Retention and replication settings alone do not define business recovery.</li>
+          <li>Which data classifications may enter events, and how will access, masking/minimization, retention, and audit evidence be handled?</li>
+          <li>Validate with architecture, security, privacy, resilience, and relevant risk/control owners as applicable.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2><span class="num">7.</span>IBM Consulting relevance</h2>
+        <div class="services">
+          <div class="service-card"><h3>Assess and shape</h3><p>IBM Consulting could help a bank prioritize event-driven use cases, assess its integration/data landscape, and define target architecture, data governance, operating-model, and control requirements across the bank’s chosen ecosystem.</p></div>
+          <div class="service-card"><h3>Support execution</h3><p>If the bank proceeds, IBM Consulting could support integration and data/process redesign, testing, resilience exercises, governance, adoption, and operations—subject to the bank’s vendor, risk, and procurement decisions.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Sources</h2>
+        <ol class="sources">
+          <li><a href="https://kafka.apache.org/41/getting-started/introduction/">Introduction — Apache Kafka — version 4.1 documentation</a> (retrieved 2026-10-22)</li>
+          <li><a href="https://kafka.apache.org/documentation/#design">Design — Apache Kafka — current documentation</a> (retrieved 2026-10-22)</li>
+          <li><a href="https://kafka.apache.org/documentation/streams/">Kafka Streams — Apache Kafka — current documentation</a> (retrieved 2026-10-22)</li>
+          <li><a href="https://kafka.apache.org/41/security/security-overview/">Security Overview — Apache Kafka — version 4.1 documentation</a> (retrieved 2026-10-22)</li>
+          <li><a href="https://www.bis.org/bcbs/publ/d516.htm">Principles for operational resilience — Basel Committee on Banking Supervision — March 2021</a> (retrieved 2026-10-22)</li>
+          <li><a href="https://www.ibm.com/consulting">IBM Consulting — IBM — current web page</a> (retrieved 2026-10-22)</li>
+        </ol>
+      </section>
+      <footer>Prepared as an educational discussion aid. Validate architecture, controls, and regulatory applicability with the client’s appropriate owners.</footer>
+    </main>
+  </article>
+</body>
+</html>
